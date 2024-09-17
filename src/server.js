@@ -36,9 +36,15 @@ export const startServer = () => {
   app.get('/students', async (req, res) => {
     try {
       const students = await studentService.getAllStudents();
-      res.status(200).json({ students });
+      res.status(200).json({
+        status: 200,
+        message: 'Successfully found students!',
+        data: {
+          students,
+        },
+      });
     } catch (error) {
-      console.log('error in get data /students', error);
+      console.log('Error in get data /students', error);
     }
   });
 
@@ -52,7 +58,13 @@ export const startServer = () => {
         });
         return;
       }
-      res.status(200).json({ student });
+      res.status(200).json({
+        status: 200,
+        message: `Successfully found student with id ${studentId}!`,
+        data: {
+          student,
+        },
+      });
     } catch (error) {
       console.log('error in get data /students/:studentId', error);
     }
@@ -61,7 +73,13 @@ export const startServer = () => {
   app.get('/contacts', async (req, res) => {
     try {
       const contacts = await contactService.getAllContacts();
-      res.status(200).json({ contacts });
+      res.status(200).json({
+        status: 200,
+        message: 'Successfully found contacts!',
+        data: {
+          contacts,
+        },
+      });
     } catch (error) {
       console.log('Error in get data /contacts', error);
     }
@@ -77,7 +95,13 @@ export const startServer = () => {
         });
         return;
       }
-      res.status(200).json({ contact });
+      res.status(200).json({
+        status: 200,
+        message: `Successfully found student with id ${contactId}!`,
+        data: {
+          contact,
+        },
+      });
     } catch (error) {
       console.log('error in get data /contacts/:contactId', error);
     }
