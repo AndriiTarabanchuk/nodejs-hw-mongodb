@@ -11,8 +11,8 @@ import {
 import { studentService, contactService } from './services/index.js';
 const PORT = env(env('PORT'), '3000');
 
-export const startServer = () => {
-  console.log(`Start server on port ${PORT}`);
+export const setupServer = () => {
+  console.log(`Server is running on port ${PORT}`);
   const app = express();
 
   app.use(
@@ -97,7 +97,7 @@ export const startServer = () => {
       }
       res.status(200).json({
         status: 200,
-        message: `Successfully found student with id ${contactId}!`,
+        message: `Successfully found contact with id ${contactId}!`,
         data: {
           contact,
         },
