@@ -1,13 +1,36 @@
+import createHttpError from 'http-errors';
 import { contactsModel } from '../db/models/contacts.js';
 
-const getAllContacts = async () => {
+export const getContacts = async () => {
   const contacts = await contactsModel.find();
   return contacts;
 };
 
-const getContactById = async (studentId) => {
-  const contact = await contactsModel.findById(studentId);
+export const getContactById = async (contactId) => {
+  const contact = await contactsModel.findById(contactId);
   return contact;
 };
 
-export default { getAllContacts, getContactById };
+export const createContact = async (payload) => {
+  return await contactsModel.create(payload);
+};
+
+export const updateContact = async (contactId, payload, options = {}) => {
+  const rawResult = await contactsModel.findByIdAndUpdate(contactId, payload, {
+    new: true,
+    includeResultMetadata: true,
+    ...options,
+  });
+
+  return {
+    contact: rawResult.value,
+    isNew: !rawResult.lastErrorObject.updatedExisting,
+  };
+};
+
+export const deleteContact = async (contactId) => {
+  const contact = await contactsModel.findByIdAndDelete({
+    _id: contactId,
+  });
+  return contact;
+};
