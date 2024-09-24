@@ -27,3 +27,10 @@ export const updateContact = async (contactId, payload, options = {}) => {
     isNew: !rawResult.lastErrorObject.updatedExisting,
   };
 };
+
+export const deleteContact = async (contactId) => {
+  const contact = await contactsModel.findByIdAndDelete({
+    _id: contactId,
+  });
+  return contact;
+};
