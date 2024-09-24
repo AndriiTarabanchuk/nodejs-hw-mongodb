@@ -21,6 +21,4 @@ contactsRouter.patch('/:contactId', ctrlWrapper(patchContactController));
 
 contactsRouter.delete('/:contactId', ctrlWrapper(deleteContactByIdController));
 
-// contactsRouter.put('/:studentId', ctrlWrapper(putStudentController));
-
 export default contactsRouter;
