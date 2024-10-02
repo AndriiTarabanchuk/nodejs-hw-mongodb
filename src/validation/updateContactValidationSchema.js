@@ -3,7 +3,7 @@ import Joi from 'joi';
 export const updateContactValidationSchema = Joi.object({
   name: Joi.string().min(3).max(30),
   phoneNumber: Joi.string().min(13),
-  email: Joi.string().email(),
+  email: Joi.string().email().default(null),
   isFavourite: Joi.boolean().default(false),
   contactType: Joi.string()
     .valid('personal', 'home', 'work')
