@@ -1,9 +1,29 @@
 import createHttpError from 'http-errors';
 import { contactsModel } from '../db/models/contacts.js';
+import { createPaginationData } from '../utils/createPaginationData.js';
 
-export const getContacts = async () => {
-  const contacts = await contactsModel.find();
-  return contacts;
+export const getContacts = async (
+  page = 1,
+  perPage = 10,
+  sortBy = 'name',
+  sortOrder = 'asc',
+) => {
+  const skip = (page - 1) * perPage;
+  const contactQuery = contactsModel.find();
+
+  const [count, data] = await Promise.all([
+    contactsModel.find().merge(contactQuery).countDocuments(),
+    contactsModel
+      .find()
+      .merge(contactQuery)
+      .skip(skip)
+      .limit(perPage)
+      .sort({
+        [sortBy]: sortOrder,
+      })
+      .exec(),
+  ]);
+  return { data, ...createPaginationData(count, page, perPage) };
 };
 
 export const getContactById = async (contactId) => {

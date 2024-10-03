@@ -8,3 +8,4 @@ export const MONGODB_VARS = {
   MONGODB_URL: 'MONGODB_URL',
   MONGODB_DB: 'MONGODB_DB',
 };
+export const SORT_ORDERS = { ASC: 'asc', DESC: 'desc' };
