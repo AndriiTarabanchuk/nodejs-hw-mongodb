@@ -2,8 +2,6 @@ import { parseNumber } from './parseNumber.js';
 
 const BOOLEANS = ['true', 'false'];
 const parseBoolean = (value) => {
-  // if (!BOOLEANS.includes(value)) return;
-  // return value === 'true' ? true : false;
   if (BOOLEANS.includes(value)) return value;
 };
 
