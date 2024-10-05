@@ -9,5 +9,5 @@ export const isValidId =
       throw createHttpError(400, 'Invalid id');
     }
 
-    return next();
+    next();
   };
