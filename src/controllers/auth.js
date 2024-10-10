@@ -2,6 +2,7 @@
 import { ACCESS_TOKEN_LIVE_TIME } from '../constants/index.js';
 import {
   loginUserService,
+  logoutUserService,
   refreshUsersSessionService,
   registerUserService,
 } from '../services/auth.js';
@@ -62,13 +63,11 @@ export const refreshUserSessionController = async (req, res) => {
   });
 };
 
-// export const logoutUserController = async (req, res) => {
-//   if (req.cookies.sessionId) {
-//     await logoutUserService(req.cookies.sessionId, req.cookies.sessionToken);
-//   }
-
-//   res.clearCookie('sessionId');
-//   res.clearCookie('sessionToken');
-
-//   res.status(204).send();
-// };
+export const logoutUserController = async (req, res) => {
+  if (req.cookies.sessionId) {
+    await logoutUserService(req.cookies.sessionId, req.cookies.sessionToken);
+  }
+  res.clearCookie('sessionId');
+  res.clearCookie('sessionToken');
+  res.status(204).send();
+};
