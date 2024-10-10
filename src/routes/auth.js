@@ -8,6 +8,7 @@ import { validateBody } from '../middlewares/validateBody.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import {
   loginUserController,
+  refreshUserSessionController,
   registerUserController,
 } from '../controllers/auth.js';
 
@@ -25,8 +26,8 @@ authRouter.post(
   ctrlWrapper(loginUserController),
 );
 
-// authRouter.post('/logout', ctrlWrapper(logoutUserController));
+authRouter.post('/refresh', ctrlWrapper(refreshUserSessionController));
 
-// authRouter.post('/refresh-session', ctrlWrapper(refreshUserSessionController));
+// authRouter.post('/logout', ctrlWrapper(logoutUserController));
 
 export default authRouter;

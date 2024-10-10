@@ -2,11 +2,11 @@ import createHttpError from 'http-errors';
 import { UsersCollection } from '../db/models/users.js';
 import { SessionsCollection } from '../db/models/sessions.js';
 import bcrypt from 'bcrypt';
+import crypto from 'node:crypto';
 import {
   ACCESS_TOKEN_LIVE_TIME,
   REFRESH_TOKEN_LIVE_TIME,
 } from '../constants/index.js';
-import { randomBytes } from 'crypto';
 
 export const registerUserService = async (payload) => {
   let user = await UsersCollection.findOne({ email: payload.email }); // check unique email in base
@@ -22,8 +22,8 @@ export const registerUserService = async (payload) => {
 };
 
 const createSession = () => ({
-  accessToken: randomBytes(30).toString('base64'),
-  refreshToken: randomBytes(30).toString('base64'),
+  accessToken: crypto.randomBytes(30).toString('base64'),
+  refreshToken: crypto.randomBytes(30).toString('base64'),
   accessTokenValidUntil: new Date(Date.now() + ACCESS_TOKEN_LIVE_TIME),
   refreshTokenValidUntil: new Date(Date.now() + REFRESH_TOKEN_LIVE_TIME),
 });
@@ -47,4 +47,35 @@ export const loginUserService = async (payload) => {
     ...createSession(),
   });
   return newSession;
+};
+
+export const refreshUsersSessionService = async ({
+  sessionId,
+  sessionToken,
+}) => {
+  const session = await SessionsCollection.findOne({
+    _id: sessionId,
+    refreshToken: sessionToken,
+  });
+
+  if (!session) {
+    throw createHttpError(401, 'Session not found!');
+  }
+
+  const isSessionTokenExpired =
+    new Date() > new Date(session.refreshTokenValidUntil);
+
+  if (isSessionTokenExpired) {
+    throw createHttpError(401, 'Session token expired!');
+  }
+
+  await SessionsCollection.deleteOne({
+    _id: sessionId,
+    refreshToken: sessionToken,
+  });
+
+  return await SessionsCollection.create({
+    userId: session._id,
+    ...createSession(),
+  });
 };
