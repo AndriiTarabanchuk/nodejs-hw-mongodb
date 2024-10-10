@@ -8,7 +8,7 @@ export const registerUserValidSchema = Joi.object({
   role: Joi.string().valid(ROLES.TEACHER, ROLES.PARENT).required(),
 });
 
-// export const loginUserValidSchema = Joi.object({
-//   email: Joi.string().email().required(),
-//   password: Joi.string().required(),
-// });
+export const loginUserValidSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().required(),
+});

@@ -1,5 +1,6 @@
 // import createHttpError from 'http-errors';
-import { registerUserService } from '../services/auth.js';
+import { ACCESS_TOKEN_LIVE_TIME } from '../constants/index.js';
+import { loginUserService, registerUserService } from '../services/auth.js';
 import { serializeUser } from '../utils/serializeUser.js';
 
 export const registerUserController = async (req, res) => {
@@ -11,30 +12,29 @@ export const registerUserController = async (req, res) => {
   });
 };
 
-// const setupSession = (res, session) => {
-//   res.cookie('sessionId', session._id, {
-//     httpOnly: true,
-//     expires: new Date(Date.now() + ACCESS_TOKEN_LIVE_TIME),
-//   });
-//   res.cookie('sessionToken', session.refreshToken, {
-//     httpOnly: true,
-//     expires: new Date(Date.now() + REFRESH_TOKEN_LIVE_TIME),
-//   });
-// };
+const setupSession = (res, session) => {
+  res.cookie('sessionId', session._id, {
+    httpOnly: true,
+    expires: new Date(Date.now() + ACCESS_TOKEN_LIVE_TIME),
+  });
+  res.cookie('sessionToken', session.refreshToken, {
+    httpOnly: true,
+    expires: new Date(Date.now() + ACCESS_TOKEN_LIVE_TIME),
+  });
+};
 
-// export const loginUserController = async (req, res) => {
-//   const session = await loginUserService(req.body);
+export const loginUserController = async (req, res) => {
+  const session = await loginUserService(req.body);
+  setupSession(res, session);
 
-//   setupSession(res, session);
-
-//   res.json({
-//     status: 200,
-//     message: `Successfully logged in an user!`,
-//     data: {
-//       accessToken: session.accessToken,
-//     },
-//   });
-// };
+  res.json({
+    status: 200,
+    message: `Successfully logged in an user!`,
+    data: {
+      accessToken: session.accessToken,
+    },
+  });
+};
 
 // export const logoutUserController = async (req, res) => {
 //   if (req.cookies.sessionId) {
