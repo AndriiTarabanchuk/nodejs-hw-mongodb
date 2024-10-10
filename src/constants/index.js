@@ -9,3 +9,8 @@ export const MONGODB_VARS = {
   MONGODB_DB: 'MONGODB_DB',
 };
 export const SORT_ORDERS = { ASC: 'asc', DESC: 'desc' };
+
+export const ROLES = {
+  TEACHER: 'teacher',
+  PARENT: 'parent',
+};
