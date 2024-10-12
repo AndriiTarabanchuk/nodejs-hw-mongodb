@@ -46,7 +46,7 @@ export const createContact = async (payload) => {
 };
 
 export const updateContact = async (id, payload, options = {}) => {
-  const rawResult = await contactsModel.findByIdAndUpdate(id, payload, {
+  const rawResult = await contactsModel.findOneAndUpdate(id, payload, {
     new: true,
     includeResultMetadata: true,
     ...options,
@@ -59,6 +59,6 @@ export const updateContact = async (id, payload, options = {}) => {
 };
 
 export const deleteContact = async (id) => {
-  const contact = await contactsModel.findByIdAndDelete(id);
+  const contact = await contactsModel.findOneAndDelete(id);
   return contact;
 };
