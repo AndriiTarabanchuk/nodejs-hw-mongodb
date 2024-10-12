@@ -1,7 +1,7 @@
 import Joi from 'joi';
-import { CONTACT_TYPE } from '../constants/inde.js';
+import { CONTACT_TYPE } from '../constants/index.js';
 
-export const createContactSchema = Joi.object({
+export const createContactValidSchema = Joi.object({
   name: Joi.string().min(3).max(30).required(),
   phoneNumber: Joi.string().min(13).required(),
   email: Joi.string().email().required(),
@@ -13,7 +13,7 @@ export const createContactSchema = Joi.object({
   userId: Joi.string().required(),
 });
 
-export const updateContactSchema = Joi.object({
+export const updateContactValidSchema = Joi.object({
   name: Joi.string().min(3).max(30),
   phoneNumber: Joi.string().min(13),
   email: Joi.string().email(),
