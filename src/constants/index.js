@@ -10,9 +10,10 @@ export const MONGODB_VARS = {
 };
 export const SORT_ORDERS = { ASC: 'asc', DESC: 'desc' };
 
-export const ROLES = {
-  TEACHER: 'teacher',
-  PARENT: 'parent',
+export const CONTACT_TYPE = {
+  PERSONAL: 'personal',
+  HOME: 'home',
+  WORK: 'work',
 };
 
 export const ACCESS_TOKEN_LIVE_TIME = 1000 * 60 * 15; //15 minutes
