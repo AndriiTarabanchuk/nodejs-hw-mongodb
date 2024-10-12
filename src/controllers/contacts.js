@@ -43,10 +43,6 @@ export const getContactsController = async (req, res) => {
 };
 
 export const getContactByIdController = async (req, res, next) => {
-  // const userId = res.user._id;
-  // const strId = req.params.contactId;
-  // const contactId = new mongoose.Types.ObjectId(strId);
-  // const id = { _id: contactId, userId: userId };
   const id = getCurrentObjId(res.user._id, req.params.contactId);
 
   const contact = await getContactById(id);

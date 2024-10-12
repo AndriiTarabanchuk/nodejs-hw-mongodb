@@ -41,7 +41,7 @@ export const loginUserService = async (payload) => {
     throw createHttpError(401, 'Unauthorized!');
   }
 
-  await SessionsCollection.deleteOne({ userId: user._id });
+  await SessionsCollection.findOneAndDelete({ userId: user._id });
 
   const newSession = await SessionsCollection.create({
     userId: user._id,
@@ -70,7 +70,7 @@ export const refreshUsersSessionService = async ({
     throw createHttpError(401, 'Session token expired!');
   }
 
-  await SessionsCollection.deleteOne({
+  await SessionsCollection.findOneAndDelete({
     _id: sessionId,
     refreshToken: sessionToken,
   });
