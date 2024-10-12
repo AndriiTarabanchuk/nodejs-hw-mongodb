@@ -54,7 +54,7 @@ export const refreshUsersSessionService = async ({
   sessionId,
   sessionToken,
 }) => {
-  const session = await SessionsCollection.findOne({
+  const session = await SessionsCollection.find({
     _id: sessionId,
     refreshToken: sessionToken,
   });
@@ -75,10 +75,11 @@ export const refreshUsersSessionService = async ({
     refreshToken: sessionToken,
   });
 
-  return await SessionsCollection.create({
-    userId: session._id,
+  const newSession = await SessionsCollection.create({
+    userId: session.userId,
     ...createSession(),
   });
+  return newSession;
 };
 
 export const logoutUserService = async (sessionId, sessionToken) => {

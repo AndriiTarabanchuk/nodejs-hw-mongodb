@@ -23,7 +23,10 @@ export const authenticate = async (req, res, next) => {
     next(createHttpError(401, 'Auth token is expired!')); ///fault time
     return;
   }
-  const user = await UsersCollection.findById(session.userId);
+  console.log(session.userId);
+
+  const user = await UsersCollection.findOne({ userId: session.userId });
+
   if (!user) {
     next(createHttpError(401, 'No user is associated with any session!')); //get valid session
     return;
