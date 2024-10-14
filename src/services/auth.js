@@ -12,7 +12,7 @@ export const registerUserService = async (payload) => {
   let user = await UsersCollection.findOne({ email: payload.email }); // check unique email in base
 
   if (user !== null) {
-    throw createHttpError(409, 'Email in use!');
+    return createHttpError(409, 'Email in use!');
   }
   const encryptedPassword = await bcrypt.hash(payload.password, 10); //adds-hash-pass
   return await UsersCollection.create({
@@ -32,13 +32,13 @@ export const loginUserService = async (payload) => {
   let user = await UsersCollection.findOne({ email: payload.email });
   if (!user) {
     //   throw createHttpError(404, 'User not found!');
-    throw createHttpError(401, 'Unauthorized!');
+    return createHttpError(401, 'Unauthorized!');
   }
 
   const isEqual = await bcrypt.compare(payload.password, user.password);
 
   if (!isEqual) {
-    throw createHttpError(401, 'Unauthorized!');
+    return createHttpError(401, 'Unauthorized!');
   }
 
   await SessionsCollection.findOneAndDelete({ userId: user._id });
@@ -54,36 +54,36 @@ export const refreshUsersSessionService = async ({
   sessionId,
   sessionToken,
 }) => {
-  const session = await SessionsCollection.find({
+  const session = await SessionsCollection.findOne({
     _id: sessionId,
     refreshToken: sessionToken,
   });
 
   if (!session) {
-    throw createHttpError(401, 'Session not found!');
+    return createHttpError(401, 'Session not found!');
   }
 
   const isSessionTokenExpired =
     new Date() > new Date(session.refreshTokenValidUntil);
 
   if (isSessionTokenExpired) {
-    throw createHttpError(401, 'Session token expired!');
+    return createHttpError(401, 'Session token expired!');
   }
-
+  const userId = session.userId;
   await SessionsCollection.findOneAndDelete({
     _id: sessionId,
     refreshToken: sessionToken,
   });
 
   const newSession = await SessionsCollection.create({
-    userId: session.userId,
+    userId: userId,
     ...createSession(),
   });
   return newSession;
 };
 
 export const logoutUserService = async (sessionId, sessionToken) => {
-  await SessionsCollection.deleteOne({
+  await SessionsCollection.findOneAndDelete({
     _id: sessionId,
     refreshToken: sessionToken,
   });

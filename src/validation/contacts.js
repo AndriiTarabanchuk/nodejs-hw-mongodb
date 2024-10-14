@@ -8,7 +8,6 @@ export const createContactValidSchema = Joi.object({
   isFavourite: Joi.boolean().default(false).required(),
   contactType: Joi.string()
     .valid(CONTACT_TYPE.PERSONAL, CONTACT_TYPE.HOME, CONTACT_TYPE.WORK)
-    .default(CONTACT_TYPE.PERSONAL)
     .required(),
   userId: Joi.string(),
 });
@@ -19,7 +18,9 @@ export const updateContactValidSchema = Joi.object({
   email: Joi.string().email(),
   isFavourite: Joi.boolean().default(false),
   contactType: Joi.string().valid(
-    (CONTACT_TYPE.PERSONAL, CONTACT_TYPE.HOME, CONTACT_TYPE.WORK),
+    CONTACT_TYPE.PERSONAL,
+    CONTACT_TYPE.HOME,
+    CONTACT_TYPE.WORK,
   ),
   userId: Joi.string(),
 });
