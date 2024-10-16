@@ -9,10 +9,12 @@ const errorHandler = (err, req, res, next) => {
     });
     return;
   }
+  const status = err.status || 500;
+  const message = err.message || 'Internal Server Error';
   res.status(500).json({
-    status: 500,
-    message: 'Something went wrong',
-    data: err,
+    status,
+    message,
+    err: err,
   });
 };
 export default errorHandler;
