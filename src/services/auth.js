@@ -1,4 +1,3 @@
-import createHttpError from 'http-errors';
 import { UsersCollection } from '../db/models/users.js';
 import { SessionsCollection } from '../db/models/sessions.js';
 import bcrypt from 'bcrypt';
@@ -7,6 +6,7 @@ import {
   ACCESS_TOKEN_LIVE_TIME,
   REFRESH_TOKEN_LIVE_TIME,
 } from '../constants/index.js';
+import createHttpError from 'http-errors';
 
 export const registerUserService = async (payload) => {
   let user = await UsersCollection.findOne({ email: payload.email }); // check unique email in base
@@ -31,14 +31,13 @@ const createSession = () => ({
 export const loginUserService = async (payload) => {
   let user = await UsersCollection.findOne({ email: payload.email });
   if (!user) {
-    //   throw createHttpError(404, 'User not found!');
-    return createHttpError(401, 'Unauthorized!');
+    throw createHttpError(404, 'User not found!');
   }
 
   const isEqual = await bcrypt.compare(payload.password, user.password);
 
   if (!isEqual) {
-    return createHttpError(401, 'Unauthorized!');
+    throw createHttpError(401, 'Unauthorized!');
   }
 
   await SessionsCollection.findOneAndDelete({ userId: user._id });

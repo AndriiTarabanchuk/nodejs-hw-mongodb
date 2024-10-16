@@ -7,6 +7,7 @@ import {
   registerUserService,
 } from '../services/auth.js';
 import { serializeUser } from '../utils/serializeUser.js';
+import createHttpError from 'http-errors';
 
 export const registerUserController = async (req, res) => {
   const user = await registerUserService(req.body);
@@ -28,7 +29,7 @@ const setupSession = (res, session) => {
   });
 };
 
-export const loginUserController = async (req, res) => {
+export const loginUserController = async (req, res, next) => {
   const session = await loginUserService(req.body);
 
   if (!session) {
@@ -53,7 +54,7 @@ export const refreshUserSessionController = async (req, res) => {
   });
 
   if (!session) {
-    throw createHttpError(401, 'Session not found!');
+    return createHttpError(401, 'Session not found!');
   }
 
   setupSession(res, session);
