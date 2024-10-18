@@ -81,7 +81,7 @@ export const sendMailController = async (req, res) => {
   const info = await sendMailService({ email });
   res.json({
     status: 200,
-    message: 'Sent mail!',
-    info: info,
+    message: 'Reset password email has been successfully sent.',
+    data: info,
   });
 };

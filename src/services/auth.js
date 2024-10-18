@@ -99,14 +99,14 @@ export const sendMailService = async ({ email }) => {
     throw createHttpError(404, 'User not found');
   }
 
-  const resetToken = jwt.sign(
+  const jwtToken = jwt.sign(
     {
       sub: user._id,
       email,
     },
     env(SMTP.JWT_SECRET),
     {
-      expiresIn: 60 * 15, //15min
+      expiresIn: 60 * 5, //15min
     },
   );
 
@@ -115,7 +115,9 @@ export const sendMailService = async ({ email }) => {
     to: email, // list of receivers
     subject: 'Reset token ✔', // Subject line
     text: 'Click to get a link resetToken', // plain text body
-    html: `<p>Click <a href="${resetToken}">here</a> to reset your password!</p>`, // html body
+    html: `<p>Click <a href= "https://${env(
+      SMTP.FRONTEND_DOMAIN,
+    )}/reset-password?token=<${jwtToken}>">here</a> to reset your password!</p>`, // html body
   };
 
   // const transporter = nodemailer.createTransport({
@@ -135,6 +137,13 @@ export const sendMailService = async ({ email }) => {
   //   // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
   //   return info;
   // }
-  const info = sendEmailClient(options);
+  try {
+    const info = await sendEmailClient(options);
+  } catch (error) {
+    throw createHttpError(
+      500,
+      'Failed to send the email, please try again later.',
+    );
+  }
   return info;
 };
