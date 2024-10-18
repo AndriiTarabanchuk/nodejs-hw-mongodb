@@ -5,6 +5,7 @@ import crypto from 'node:crypto';
 import {
   ACCESS_TOKEN_LIVE_TIME,
   REFRESH_TOKEN_LIVE_TIME,
+  SMTP,
 } from '../constants/index.js';
 import createHttpError from 'http-errors';
 
@@ -86,4 +87,54 @@ export const logoutUserService = async (sessionId, sessionToken) => {
     _id: sessionId,
     refreshToken: sessionToken,
   });
+};
+
+import { env } from '../utils/env.js';
+import jwt from 'jsonwebtoken';
+import { sentEmailClient } from '../utils/sentEmailClient.js';
+
+export const sendMailService = async ({ email }) => {
+  const user = await UsersCollection.findOne({ email });
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+
+  const resetToken = jwt.sign(
+    {
+      sub: user._id,
+      email,
+    },
+    env(SMTP.JWT_SECRET),
+    {
+      expiresIn: 60 * 15, //15min
+    },
+  );
+
+  const options = {
+    from: `Reset Token <${env(SMTP.SMTP_FROM)}>`, // sender address '"Maddison Foo Koch 👻" <explorituse@gmail.com>'
+    to: email, // list of receivers
+    subject: 'Reset token ✔', // Subject line
+    text: 'Click to get a link resetToken', // plain text body
+    html: `<p>Click <a href="${resetToken}">here</a> to reset your password!</p>`, // html body
+  };
+
+  // const transporter = nodemailer.createTransport({
+  //   host: env(SMTP.SMTP_HOST),
+  //   port: env(SMTP.SMTP_PORT),
+  //   secure: false, // true for port 465, false for other ports
+  //   auth: {
+  //     user: env(SMTP.SMTP_USER),
+  //     pass: env(SMTP.SMTP_PASSWORD),
+  //   },
+  // });
+
+  // async..await is not allowed in global scope, must use a wrapper
+  // async function main(options) {
+  //   // send mail with defined transport object
+  //   const info = await transporter.sendMail(options);
+  //   // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
+  //   return info;
+  // }
+  const info = sentEmailClient(options);
+  return info;
 };
