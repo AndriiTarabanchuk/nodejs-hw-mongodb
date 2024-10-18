@@ -12,6 +12,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const sentEmailClient = async (options) => {
+export const sendEmailClient = async (options) => {
   return await transporter.sendMail(options);
 };

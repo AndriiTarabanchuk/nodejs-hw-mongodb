@@ -9,6 +9,10 @@ import {
 } from '../constants/index.js';
 import createHttpError from 'http-errors';
 
+import { env } from '../utils/env.js';
+import jwt from 'jsonwebtoken';
+import { sendEmailClient } from '../utils/sendEmailClient.js';
+
 export const registerUserService = async (payload) => {
   let user = await UsersCollection.findOne({ email: payload.email }); // check unique email in base
 
@@ -89,10 +93,6 @@ export const logoutUserService = async (sessionId, sessionToken) => {
   });
 };
 
-import { env } from '../utils/env.js';
-import jwt from 'jsonwebtoken';
-import { sentEmailClient } from '../utils/sentEmailClient.js';
-
 export const sendMailService = async ({ email }) => {
   const user = await UsersCollection.findOne({ email });
   if (!user) {
@@ -135,6 +135,6 @@ export const sendMailService = async ({ email }) => {
   //   // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
   //   return info;
   // }
-  const info = sentEmailClient(options);
+  const info = sendEmailClient(options);
   return info;
 };
