@@ -11,6 +11,7 @@ import {
   logoutUserController,
   refreshUserSessionController,
   registerUserController,
+  sendMailController,
 } from '../controllers/auth.js';
 
 const authRouter = Router();
@@ -30,5 +31,7 @@ authRouter.post(
 authRouter.post('/refresh', ctrlWrapper(refreshUserSessionController));
 
 authRouter.post('/logout', ctrlWrapper(logoutUserController));
+
+authRouter.post('/request-reset-email', ctrlWrapper(sendMailController));
 
 export default authRouter;

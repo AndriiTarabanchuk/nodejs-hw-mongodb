@@ -5,6 +5,7 @@ import {
   logoutUserService,
   refreshUsersSessionService,
   registerUserService,
+  sendMailService,
 } from '../services/auth.js';
 import { serializeUser } from '../utils/serializeUser.js';
 import createHttpError from 'http-errors';
@@ -73,4 +74,14 @@ export const logoutUserController = async (req, res) => {
   res.clearCookie('sessionId');
   res.clearCookie('sessionToken');
   res.status(204).send();
+};
+
+export const sendMailController = async (req, res) => {
+  const { email } = req.body;
+  const info = await sendMailService({ email });
+  res.json({
+    status: 200,
+    message: 'Sent mail!',
+    info: info,
+  });
 };

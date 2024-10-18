@@ -18,3 +18,12 @@ export const CONTACT_TYPE = {
 
 export const ACCESS_TOKEN_LIVE_TIME = 1000 * 60 * 15; //15 minutes
 export const REFRESH_TOKEN_LIVE_TIME = 1000 * 60 * 60 * 24 * 30; //30 days
+
+export const SMTP = {
+  SMTP_HOST: 'SMTP_HOST',
+  SMTP_PORT: 'SMTP_PORT',
+  SMTP_USER: 'SMTP_USER',
+  SMTP_PASSWORD: 'SMTP_PASSWORD',
+  SMTP_FROM: 'SMTP_FROM',
+  JWT_SECRET: 'JWT_SECRET',
+};
