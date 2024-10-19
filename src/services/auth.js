@@ -149,6 +149,7 @@ export const requestResetTokenService = async ({ email }) => {
       'Failed to send the email, please try again later.',
     );
   }
+
   return info;
 };
 
@@ -157,7 +158,7 @@ export const resetPassword = async (payload) => {
   let entries;
 
   if (payload.token === oldJwtToken) {
-    throw createHttpError(401, 'Token is used only once');
+    throw createHttpError(401, 'The token is used only once.');
   }
   if (payload.token !== oldJwtToken) {
     oldJwtToken = payload.token;

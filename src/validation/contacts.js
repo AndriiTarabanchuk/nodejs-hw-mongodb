@@ -10,6 +10,7 @@ export const createContactValidSchema = Joi.object({
     .valid(CONTACT_TYPE.PERSONAL, CONTACT_TYPE.HOME, CONTACT_TYPE.WORK)
     .required(),
   userId: Joi.string(),
+  photo: Joi.string(),
 });
 
 export const updateContactValidSchema = Joi.object({
@@ -23,4 +24,5 @@ export const updateContactValidSchema = Joi.object({
     CONTACT_TYPE.WORK,
   ),
   userId: Joi.string(),
+  photo: Joi.string(),
 });
