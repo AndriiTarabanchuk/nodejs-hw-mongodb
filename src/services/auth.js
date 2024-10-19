@@ -98,7 +98,7 @@ export const logoutUserService = async (sessionId, sessionToken) => {
   });
 };
 
-export const sendMailService = async ({ email }) => {
+export const requestResetTokenService = async ({ email }) => {
   const user = await UsersCollection.findOne({ email });
   if (!user) {
     throw createHttpError(404, 'User not found');
@@ -150,4 +150,63 @@ export const sendMailService = async ({ email }) => {
     );
   }
   return info;
+};
+
+let oldJwtToken;
+export const resetPassword = async (payload) => {
+  let entries;
+
+  if (payload.token === oldJwtToken) {
+    throw createHttpError(401, 'Token is used only once');
+  }
+  if (payload.token !== oldJwtToken) {
+    oldJwtToken = payload.token;
+  }
+
+  try {
+    entries = jwt.verify(payload.token, env(SMTP.JWT_SECRET));
+  } catch (err) {
+    throw createHttpError(401, 'Token is expired or invalid.');
+  }
+
+  const user = await UsersCollection.findOne({
+    email: entries.email,
+    _id: entries.sub,
+  });
+
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+
+  const encryptedPassword = await bcrypt.hash(payload.password, 10);
+  //update User
+  await UsersCollection.updateOne(
+    { _id: user._id },
+    { password: encryptedPassword },
+  );
+
+  const oldSession = await SessionsCollection.findOneAndDelete({
+    userId: user._id,
+  });
+
+  if (!oldSession) {
+    return createHttpError(401, 'Session not found!');
+  }
+
+  //delete ld Session
+  await SessionsCollection.findOneAndDelete({
+    userId: user._id,
+    refreshToken: oldSession.sessionToken,
+  });
+
+  //create new Session
+  const newSession = await SessionsCollection.create({
+    userId: user._id,
+    ...createSession(),
+  });
+
+  return {
+    oldA_T: oldSession.accessToken,
+    newA_T: newSession.accessToken,
+  };
 };

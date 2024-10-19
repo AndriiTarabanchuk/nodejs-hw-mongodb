@@ -5,7 +5,8 @@ import {
   logoutUserService,
   refreshUsersSessionService,
   registerUserService,
-  sendMailService,
+  requestResetTokenService,
+  resetPassword,
 } from '../services/auth.js';
 import { serializeUser } from '../utils/serializeUser.js';
 import createHttpError from 'http-errors';
@@ -55,7 +56,7 @@ export const refreshUserSessionController = async (req, res) => {
   });
 
   if (!session) {
-    return createHttpError(401, 'Session not found!');
+    throw createHttpError(401, 'Session not found!');
   }
 
   setupSession(res, session);
@@ -76,9 +77,9 @@ export const logoutUserController = async (req, res) => {
   res.status(204).send();
 };
 
-export const sendMailController = async (req, res) => {
+export const requestResetEmailController = async (req, res) => {
   const { email } = req.body;
-  const info = await sendMailService({ email });
+  const info = await requestResetTokenService({ email });
   res.json({
     status: 200,
     message: 'Reset password email has been successfully sent.',
@@ -86,4 +87,11 @@ export const sendMailController = async (req, res) => {
   });
 };
 
-export const resetPwdController = async (req, res) => {};
+export const resetPasswordController = async (req, res) => {
+  const info = await resetPassword(req.body);
+  res.json({
+    message: 'Password was successfully reset!',
+    status: 200,
+    data: { info },
+  });
+};
