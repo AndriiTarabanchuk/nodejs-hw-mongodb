@@ -11,6 +11,7 @@ import {
   logoutUserController,
   refreshUserSessionController,
   registerUserController,
+  resetPwdController,
   sendMailController,
 } from '../controllers/auth.js';
 
@@ -33,5 +34,7 @@ authRouter.post('/refresh', ctrlWrapper(refreshUserSessionController));
 authRouter.post('/logout', ctrlWrapper(logoutUserController));
 
 authRouter.post('/send-reset-email', ctrlWrapper(sendMailController));
+
+authRouter.post('/reset-pwd', ctrlWrapper(resetPwdController));
 
 export default authRouter;

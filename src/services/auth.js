@@ -6,12 +6,17 @@ import {
   ACCESS_TOKEN_LIVE_TIME,
   REFRESH_TOKEN_LIVE_TIME,
   SMTP,
+  TEMPLATES_DIR,
 } from '../constants/index.js';
 import createHttpError from 'http-errors';
 
 import { env } from '../utils/env.js';
 import jwt from 'jsonwebtoken';
 import { sendEmailClient } from '../utils/sendEmailClient.js';
+
+import handlebars from 'handlebars';
+import path from 'node:path';
+import fs from 'node:fs/promises';
 
 export const registerUserService = async (payload) => {
   let user = await UsersCollection.findOne({ email: payload.email }); // check unique email in base
@@ -99,46 +104,45 @@ export const sendMailService = async ({ email }) => {
     throw createHttpError(404, 'User not found');
   }
 
-  const jwtToken = jwt.sign(
+  const resetToken = jwt.sign(
     {
       sub: user._id,
       email,
     },
     env(SMTP.JWT_SECRET),
     {
-      expiresIn: 60 * 5, //15min
+      expiresIn: 60 * 5, // 5min
     },
   );
+
+  const resetPasswordTemplatePath = path.join(
+    TEMPLATES_DIR,
+    'reset-password-email.html',
+  );
+
+  const templateSource = (
+    await fs.readFile(resetPasswordTemplatePath)
+  ).toString();
+
+  const template = handlebars.compile(templateSource);
+  const html = template({
+    name: user.name,
+    link: `${env('APP_DOMAIN')}/reset-password?token=${resetToken}`,
+  });
 
   const options = {
     from: `Reset Token <${env(SMTP.SMTP_FROM)}>`, // sender address '"Maddison Foo Koch 👻" <explorituse@gmail.com>'
     to: email, // list of receivers
-    subject: 'Reset token ✔', // Subject line
-    text: 'Click to get a link resetToken', // plain text body
-    html: `<p>Click <a href= "https://${env(
-      SMTP.FRONTEND_DOMAIN,
-    )}/reset-password?token=<${jwtToken}>">here</a> to reset your password!</p>`, // html body
+    subject: 'Reset your password', // Subject line
+    text: 'Click to link to get resetToken', // plain text body
+    html: html,
+    // html: `<p>Click <a href= "https://${env(
+    //   SMTP.FRONTEND_DOMAIN,
+    // )}/reset-password?token=<${jwtToken}>">here</a> to reset your password!</p>`, // html body
   };
-
-  // const transporter = nodemailer.createTransport({
-  //   host: env(SMTP.SMTP_HOST),
-  //   port: env(SMTP.SMTP_PORT),
-  //   secure: false, // true for port 465, false for other ports
-  //   auth: {
-  //     user: env(SMTP.SMTP_USER),
-  //     pass: env(SMTP.SMTP_PASSWORD),
-  //   },
-  // });
-
-  // async..await is not allowed in global scope, must use a wrapper
-  // async function main(options) {
-  //   // send mail with defined transport object
-  //   const info = await transporter.sendMail(options);
-  //   // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
-  //   return info;
-  // }
+  let info;
   try {
-    const info = await sendEmailClient(options);
+    info = await sendEmailClient(options);
   } catch (error) {
     throw createHttpError(
       500,

@@ -30,3 +30,6 @@ export const SMTP = {
   FRONTEND_DOMAIN: 'FRONTEND_DOMAIN',
   APP_DOMAIN: 'APP_DOMAIN ',
 };
+
+import path from 'node:path';
+export const TEMPLATES_DIR = path.join(process.cwd(), 'src', 'templates');
