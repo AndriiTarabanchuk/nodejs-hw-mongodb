@@ -6,12 +6,17 @@ import {
   ACCESS_TOKEN_LIVE_TIME,
   REFRESH_TOKEN_LIVE_TIME,
   SMTP,
+  TEMPLATES_DIR,
 } from '../constants/index.js';
 import createHttpError from 'http-errors';
 
 import { env } from '../utils/env.js';
 import jwt from 'jsonwebtoken';
 import { sendEmailClient } from '../utils/sendEmailClient.js';
+
+import handlebars from 'handlebars';
+import path from 'node:path';
+import fs from 'node:fs/promises';
 
 export const registerUserService = async (payload) => {
   let user = await UsersCollection.findOne({ email: payload.email }); // check unique email in base
@@ -93,7 +98,7 @@ export const logoutUserService = async (sessionId, sessionToken) => {
   });
 };
 
-export const sendMailService = async ({ email }) => {
+export const requestResetTokenService = async ({ email }) => {
   const user = await UsersCollection.findOne({ email });
   if (!user) {
     throw createHttpError(404, 'User not found');
@@ -106,35 +111,103 @@ export const sendMailService = async ({ email }) => {
     },
     env(SMTP.JWT_SECRET),
     {
-      expiresIn: 60 * 15, //15min
+      expiresIn: 60 * 5, // 5min
     },
   );
+
+  const resetPasswordTemplatePath = path.join(
+    TEMPLATES_DIR,
+    'reset-password-email.html',
+  );
+
+  const templateSource = (
+    await fs.readFile(resetPasswordTemplatePath)
+  ).toString();
+
+  const template = handlebars.compile(templateSource);
+  const html = template({
+    name: user.name,
+    link: `${env('APP_DOMAIN')}/reset-password?token=${resetToken}`,
+  });
 
   const options = {
     from: `Reset Token <${env(SMTP.SMTP_FROM)}>`, // sender address '"Maddison Foo Koch 👻" <explorituse@gmail.com>'
     to: email, // list of receivers
-    subject: 'Reset token ✔', // Subject line
-    text: 'Click to get a link resetToken', // plain text body
-    html: `<p>Click <a href="${resetToken}">here</a> to reset your password!</p>`, // html body
+    subject: 'Reset your password', // Subject line
+    text: 'Click to link to get resetToken', // plain text body
+    html: html,
+    // html: `<p>Click <a href= "https://${env(
+    //   SMTP.FRONTEND_DOMAIN,
+    // )}/reset-password?token=<${jwtToken}>">here</a> to reset your password!</p>`, // html body
   };
+  let info;
+  try {
+    info = await sendEmailClient(options);
+  } catch (error) {
+    throw createHttpError(
+      500,
+      'Failed to send the email, please try again later.',
+    );
+  }
 
-  // const transporter = nodemailer.createTransport({
-  //   host: env(SMTP.SMTP_HOST),
-  //   port: env(SMTP.SMTP_PORT),
-  //   secure: false, // true for port 465, false for other ports
-  //   auth: {
-  //     user: env(SMTP.SMTP_USER),
-  //     pass: env(SMTP.SMTP_PASSWORD),
-  //   },
-  // });
-
-  // async..await is not allowed in global scope, must use a wrapper
-  // async function main(options) {
-  //   // send mail with defined transport object
-  //   const info = await transporter.sendMail(options);
-  //   // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
-  //   return info;
-  // }
-  const info = sendEmailClient(options);
   return info;
+};
+
+let oldJwtToken;
+export const resetPassword = async (payload) => {
+  let entries;
+
+  if (payload.token === oldJwtToken) {
+    throw createHttpError(401, 'The token is used only once.');
+  }
+  if (payload.token !== oldJwtToken) {
+    oldJwtToken = payload.token;
+  }
+
+  try {
+    entries = jwt.verify(payload.token, env(SMTP.JWT_SECRET));
+  } catch (err) {
+    throw createHttpError(401, 'Token is expired or invalid.');
+  }
+
+  const user = await UsersCollection.findOne({
+    email: entries.email,
+    _id: entries.sub,
+  });
+
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+
+  const encryptedPassword = await bcrypt.hash(payload.password, 10);
+  //update User
+  await UsersCollection.updateOne(
+    { _id: user._id },
+    { password: encryptedPassword },
+  );
+
+  const oldSession = await SessionsCollection.findOneAndDelete({
+    userId: user._id,
+  });
+
+  if (!oldSession) {
+    return createHttpError(401, 'Session not found!');
+  }
+
+  //delete ld Session
+  await SessionsCollection.findOneAndDelete({
+    userId: user._id,
+    refreshToken: oldSession.sessionToken,
+  });
+
+  //create new Session
+  const newSession = await SessionsCollection.create({
+    userId: user._id,
+    ...createSession(),
+  });
+
+  return {
+    oldA_T: oldSession.accessToken,
+    newA_T: newSession.accessToken,
+  };
 };

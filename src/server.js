@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import router from './routes/index.js';
 import notFoundHandler from './middlewares/notFoundHandler.js';
 import errorHandler from './middlewares/errorHandler.js';
+import { UPLOAD_DIR } from './constants/index.js';
 
 const PORT = env(env('PORT'), '3000');
 
@@ -30,7 +31,7 @@ export const setupServer = () => {
       message: 'Hello world.  After authorizations you can get list /contacts ',
     });
   });
-
+  app.use('/uploads', express.static(UPLOAD_DIR));
   app.use(router);
 
   app.use(notFoundHandler);
