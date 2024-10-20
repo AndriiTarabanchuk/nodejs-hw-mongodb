@@ -9,7 +9,6 @@ export const createContactValidSchema = Joi.object({
   contactType: Joi.string()
     .valid(CONTACT_TYPE.PERSONAL, CONTACT_TYPE.HOME, CONTACT_TYPE.WORK)
     .required(),
-  userId: Joi.string(),
   photo: Joi.string(),
 });
 
