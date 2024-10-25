@@ -1,0 +1,18 @@
+type: object
+required:
+  - name
+  - email
+  - password
+properties:
+  name:
+    description: "User's name"
+    type: string
+    example: 'Eddy Canter Din'
+  email:
+    description: "User's email"
+    type: string
+    example: 'Eddy_Canter_Din@rose.com'
+  password:
+    description: "User's MongoBD id"
+    type: string
+    example: 'asdqwewq'
