@@ -34,7 +34,7 @@ export const getContacts = async (
       })
       .exec(),
   ]);
-  dataSerial = data.map((item) => {
+  const dataSerial = await data.map((item) => {
     return serializeContact(item);
   });
   return { dataSerial, ...createPaginationData(count, page, perPage) };
