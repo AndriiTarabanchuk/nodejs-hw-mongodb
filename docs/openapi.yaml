@@ -14,7 +14,11 @@ tags:
 servers:
   - url: http://localhost:3000
   - url: https://nodejs-hw-mongodb-vree.onrender.com
-
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
 paths:
   /contacts:
     get:
@@ -28,9 +32,24 @@ paths:
       $ref: '../docs/swagger/paths/contacts/{id}/patch.yaml'
     delete:
       $ref: '../docs/swagger/paths/contacts/{id}/delete.yaml'
-
-components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
+  /auth/register:
+    post:
+      $ref: '../docs/swagger/paths/auth/register/post.yaml'
+  /auth/login:
+    post:
+      $ref: '../docs/swagger/paths/auth/login/post.yaml'
+  /auth/refresh:
+    post:
+      $ref: '../docs/swagger/paths/auth/refresh/post.yaml'
+  /auth/send-reset-email:
+    post:
+      $ref: '../docs/swagger/paths/auth/send-reset-email/post.yaml'
+  /auth/reset-pwd:
+    post:
+      $ref: '../docs/swagger/paths/auth/reset-pwd/post.yaml'
+  /auth/get-oauth-url:
+    get:
+      $ref: '../docs/swagger/paths/auth/get-oauth-url/get.yaml'
+  /auth/confirm-oauth:
+    post:
+      $ref: '../docs/swagger/paths/auth/confirm-oauth/post.yaml'
