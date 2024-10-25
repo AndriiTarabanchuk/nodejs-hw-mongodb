@@ -42,11 +42,11 @@ properties:
     description: "Link to contact's photo"
     type: string
     example: 'https://res.cloudinary.com/dft9sheec/image/upload/v1729363856/zcff0lyg0fgmrcgmyonz.jpg'
-  createdAt:
-    description: "Contact's createdAt"
-    type: string
-    example: '2024-10-20T16:32:22.263Z'
-  updatedAt:
-    description: "Contact's updatedAt"
-    type: string
-    example: '2024-10-20T16:32:22.263Z'
+  # createdAt:
+  #   description: "Contact's createdAt"
+  #   type: string
+  #   example: '2024-10-20T16:32:22.263Z'
+  # updatedAt:
+  #   description: "Contact's updatedAt"
+  #   type: string
+  #   example: '2024-10-20T16:32:22.263Z'

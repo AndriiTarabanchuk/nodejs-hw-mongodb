@@ -1,6 +1,7 @@
 import createHttpError from 'http-errors';
 import { contactsModel } from '../db/models/contacts.js';
 import { createPaginationData } from '../utils/createPaginationData.js';
+import { serializeContact } from '../utils/serializeContact.js';
 
 export const getContacts = async (
   page = 1,
@@ -33,16 +34,20 @@ export const getContacts = async (
       })
       .exec(),
   ]);
-  return { data, ...createPaginationData(count, page, perPage) };
+  dataSerial = data.map((item) => {
+    return serializeContact(item);
+  });
+  return { dataSerial, ...createPaginationData(count, page, perPage) };
 };
 
 export const getContactById = async (id) => {
   const contact = await contactsModel.findOne(id);
-  return contact;
+  return serializeContact(contact);
 };
 
 export const createContact = async (payload) => {
-  return await contactsModel.create(payload);
+  const contact = await contactsModel.create(payload);
+  return serializeContact(contact);
 };
 
 export const updateContact = async (id, payload, options = {}) => {
@@ -53,12 +58,12 @@ export const updateContact = async (id, payload, options = {}) => {
   });
 
   return {
-    contact: rawResult.value,
+    contact: serializeContact(rawResult.value),
     isNew: !rawResult.lastErrorObject.updatedExisting,
   };
 };
 
 export const deleteContact = async (id) => {
   const contact = await contactsModel.findOneAndDelete(id);
-  return contact;
+  return serializeContact(contact);
 };
