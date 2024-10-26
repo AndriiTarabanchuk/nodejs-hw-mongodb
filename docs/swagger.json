@@ -195,19 +195,14 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "_id",
                   "name",
                   "phoneNumber",
                   "email",
                   "isFavourite",
-                  "contactType"
+                  "contactType",
+                  "photo"
                 ],
                 "properties": {
-                  "_id": {
-                    "description": "Contact's MongoBD id",
-                    "type": "string",
-                    "example": "671385f79ba9f2684cfa4c3b"
-                  },
                   "name": {
                     "description": "Contact's name",
                     "type": "string",
@@ -237,11 +232,6 @@
                       "work"
                     ],
                     "example": "personal"
-                  },
-                  "userId": {
-                    "description": "Contact's user id",
-                    "type": "string",
-                    "example": "6714fdf8e91a450dad0379f9"
                   },
                   "photo": {
                     "description": "Link to contact's photo",
@@ -380,11 +370,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "_id": {
-                    "description": "Contact's MongoBD id",
-                    "type": "string",
-                    "example": "671385f79ba9f2684cfa4c3b"
-                  },
                   "name": {
                     "description": "Contact's name",
                     "type": "string",
@@ -414,11 +399,6 @@
                       "work"
                     ],
                     "example": "personal"
-                  },
-                  "userId": {
-                    "description": "Contact's user id",
-                    "type": "string",
-                    "example": "6714fdf8e91a450dad0379f9"
                   },
                   "photo": {
                     "description": "Link to contact's photo",
