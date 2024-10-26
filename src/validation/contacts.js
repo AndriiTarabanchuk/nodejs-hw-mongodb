@@ -22,6 +22,5 @@ export const updateContactValidSchema = Joi.object({
     CONTACT_TYPE.HOME,
     CONTACT_TYPE.WORK,
   ),
-  userId: Joi.string(),
   photo: Joi.string(),
 });
