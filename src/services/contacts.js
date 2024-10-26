@@ -64,6 +64,6 @@ export const updateContact = async (id, payload, options = {}) => {
 };
 
 export const deleteContact = async (id) => {
-  const contact = await contactsModel.findOneAndDelete(id);
-  return serializeContact(contact);
+  await contactsModel.findOneAndDelete(id);
+  return;
 };
