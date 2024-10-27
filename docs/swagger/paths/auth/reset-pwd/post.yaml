@@ -1,0 +1,48 @@
+tags:
+  - Auth
+summary: Reset password User
+operationId: resetPasswordUser
+description: 'Reset password User with payload'
+security:
+  - bearerAuth: []
+requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - password
+          - token
+        properties:
+          password:
+            description: "User's new password"
+            type: string
+            example: 'Eddy_Canter_Din@rose.com'
+          token:
+            description: "User's from email jwt-token"
+            type: string
+            example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NzE0ZmRmOGU5MWE0NTBkYWQwMzc5ZjkiLCJlbWFpbCI6ImV4cGxvcml0dXNlQGdtYWlsLmNvbSIsImlhdCI6MTcyOTQ0NDg2MCwiZXhwIjoxNzI5NDQ1MTYwfQ.wBrWNWZb1K1LcFN2LcSYPhme5M9r-i2rlVYh3UFo5E8'
+
+responses:
+  '200':
+    description: Reset password User
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: 'Successfully get Google OAuth url!'
+            data:
+              type: string
+              example: '{}'
+  '401':
+    $ref: '../../../components/responses/401.yaml'

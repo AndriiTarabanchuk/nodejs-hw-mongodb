@@ -1,0 +1,53 @@
+tags:
+  - Auth
+summary: Refresh User Session
+operationId: refreshUserSession
+description: "Refresh  the user's session based on cookies."
+security:
+  - bearerAuth: []
+requestBody:
+  description: Cookies containing the sessionId and sessionToken.
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          sessionId:
+            type: string
+            description: "Session ID from user's cookies"
+            example: '2267197a9e7b20fad888d61dd2'
+          sessionToken:
+            type: string
+            description: "Session Token from user's cookies"
+            example: '8an5PQhPvfaRGVoGg5SoE6rECcCctsRdFjnYVK0J'
+
+responses:
+  '200':
+    description: Creates a contact
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: 'Successfully refreshed a session!'
+            data:
+              type: object
+              required:
+                - accessToken
+              properties:
+                accessToken:
+                  type: string
+                  example: 'hyD0Z8JazWnmmZ35r7T2dUw06+mBS7CMtNJS8i9G'
+
+  '401':
+    $ref: '../../../components/responses/401.yaml'

@@ -1,0 +1,53 @@
+tags:
+  - Auth
+summary: Login User
+operationId: loginUser
+description: 'Login User with payload'
+security:
+  - bearerAuth: []
+requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - email
+          - password
+        properties:
+          email:
+            description: "User's email"
+            type: string
+            example: 'Eddy_Canter_Din@rose.com'
+          password:
+            description: "User's password"
+            type: string
+            example: '671385f79ba9f2684cfa4c3b'
+responses:
+  '201':
+    description: Creates a contact
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 201
+            message:
+              type: string
+              example: 'Successfully logged in an user!'
+            data:
+              type: object
+              required:
+                - accessToken
+              properties:
+                accessToken:
+                  type: string
+                  example: '3OtP+7dEYfNK+EED8dMBUFS+/Ru05npMar7dflGa'
+
+  '401':
+    $ref: '../../../components/responses/401.yaml'

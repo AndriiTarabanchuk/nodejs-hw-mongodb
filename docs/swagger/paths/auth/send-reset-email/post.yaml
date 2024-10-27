@@ -1,0 +1,42 @@
+tags:
+  - Auth
+summary: Reset User pass sent to email
+operationId: resetToEmailUser
+description: 'Reset sent to email with payload'
+security:
+  - bearerAuth: []
+requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - email
+        properties:
+          email:
+            description: "User's email"
+            type: string
+            example: 'Eddy_Canter_Din@rose.com'
+responses:
+  '200':
+    description: Reset password User
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: 'Reset password email has been successfully sent.'
+            data:
+              type: string
+              example: '{}'
+  '401':
+    $ref: '../../../components/responses/401.yaml'
