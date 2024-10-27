@@ -22,7 +22,7 @@ export const getContacts = async (
     contactQuery.where('contactType').equals(filter.contactType);
   }
 
-  const [count, data] = await Promise.all([
+  const [count, dataGet] = await Promise.all([
     contactsModel.find().merge(contactQuery).countDocuments(),
     contactsModel
       .find()
@@ -34,10 +34,10 @@ export const getContacts = async (
       })
       .exec(),
   ]);
-  const dataSerial = await data.map((item) => {
+  const data = await dataGet.map((item) => {
     return serializeContact(item);
   });
-  return { dataSerial, ...createPaginationData(count, page, perPage) };
+  return { data, ...createPaginationData(count, page, perPage) };
 };
 
 export const getContactById = async (id) => {
