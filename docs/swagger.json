@@ -1084,11 +1084,6 @@
             ],
             "example": "personal"
           },
-          "userId": {
-            "description": "Contact's parent id",
-            "type": "string",
-            "example": "6714fdf8e91a450dad0379f9"
-          },
           "photo": {
             "description": "Link to contact's photo",
             "type": "string",
