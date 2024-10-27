@@ -34,14 +34,14 @@ properties:
     type: string
     enum: ['personal', 'home', 'work']
     example: 'personal'
-  userId:
-    description: "Contact's parent id"
-    type: string
-    example: '6714fdf8e91a450dad0379f9'
   photo:
     description: "Link to contact's photo"
     type: string
     example: 'https://res.cloudinary.com/dft9sheec/image/upload/v1729363856/zcff0lyg0fgmrcgmyonz.jpg'
+    # userId:
+    #     description: "Contact's parent id"
+    #     type: string
+    #     example: '6714fdf8e91a450dad0379f9'
   # createdAt:
   #   description: "Contact's createdAt"
   #   type: string
