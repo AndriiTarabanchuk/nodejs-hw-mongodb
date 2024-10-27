@@ -6,7 +6,6 @@ export const serializeContact = (contact) => {
     email: contact.email,
     isFavourite: contact.isFavourite,
     contactType: contact.contactType,
-    userId: contact.userId,
     photo: contact.photo,
   };
 };
